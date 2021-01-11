@@ -46,10 +46,10 @@ These objects will likely need to respect the network partition key in the futur
 Other solutions will likely need to be used for these:
 
 * [Cookies](https://blog.chromium.org/2020/01/building-more-private-web-path-towards.html)
-* Reporting API. These need to be updated to match the latest draft of the spec, which makes reporting information document-scoped. Reports can then inherit the network partition key from the document triggering the report.
 * HSTS cache
 * Cert validation (Both the verification cache itself, and OCSP/CRL/ACA network fetches, which will use a single transient network partition key for now, at least)
-* Network error logging.
+* Reporting API. The latest (draft of the spec)[https://w3c.github.io/reporting/] addresses tracking concerns, by making it document-scoped.
+* Network error logging
 
 Some potential cross-site information leaks involve upstream resources that are not under the control of a browser, and others involve trusted third parties and would have a significant performance impact to mitigate.  Here are some other potential leaks not currently covered by this explainer, with no work currently planned to address them:
 * The browser can't do much about upstream or OS-layer DNS caches, though using DoH without fallback or the built-in DNS resolver will bypass OS caches, at least.
