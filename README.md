@@ -4,16 +4,17 @@ Last update:  Jan 11, 2021
 
 ## Introduction
 
-A browser's network resources, such as connections, DNS cache, and alternative service data are generally shared globally.  That is, requests to the same destination across pages can reuse the same socket, and DNS lookups across pages will use the same cache.  This allows for side-channel timing attacks, where one site can figure out if another has been visited recently. For example, if the connection is made quickly, it may be assumed that the socket was warm. It also allows for third parties to track users across first party contexts they are loaded in using a variety of techniques (tracking socket reuse, using per-user alternative service advertisements, etc).  See Chrome (Privacy Sandbox)[https://github.com/michaelkleber/privacy-model] privacy model for more information.
+A browser's network resources, such as connections, DNS cache, and alternative service data are generally shared globally.  That is, requests to the same destination across pages can reuse the same socket, and DNS lookups across pages will use the same cache.  This allows for side-channel timing attacks, where one site can figure out if another has been visited recently. For example, if the connection is made quickly, it may be assumed that the socket was warm. It also allows for third parties to track users across first party contexts they are loaded in using a variety of techniques (tracking socket reuse, using per-user alternative service advertisements, etc).  See Chrome [Privacy Sandbox](https://github.com/michaelkleber/privacy-model) privacy model for more information.
 
-We propose to [https://github.com/michaelkleber/privacy-model#identity-is-partitioned-by-first-party-site](partition) much of this state to prevent these resources from being shared across first party contexts to protect against these sorts of attacks.  To do this, each request will have an additional "network partition key" that must match in order for resources to be reused.
+We propose to [partition](https://github.com/michaelkleber/privacy-model#identity-is-partitioned-by-first-party-site) much of this state to prevent these resources from being shared across first party contexts to protect against these sorts of attacks.  To do this, each request will have an additional "network partition key" that must match in order for resources to be reused.
+
 This extra key will necessarily make third party resources less reusable, as sites will not be able to access shared resources and metadata learned from loading other sites.
 
 ## Network Partition Key
 
-This is covered by the earlier [https://github.com/shivanigithub/http-cache-partitioning/](HTTP cache partitioning explainer) as well as the [https://fetch.spec.whatwg.org/#network-partition-key](fetch spec). We propose to use the two value (top-level site, iframe site) key described in the HTTP cache partitioning explainer as "triple keying".
+This is covered by the earlier [HTTP cache partitioning explainer](https://github.com/shivanigithub/http-cache-partitioning/) as well as the [fetch spec](https://fetch.spec.whatwg.org/#network-partition-key). We propose to use the two value (top-level site, iframe site) key described in the HTTP cache partitioning explainer as "triple keying".
 
-A "transient network partition key" is a network partition key for an [https://html.spec.whatwg.org/multipage/origin.html#concept-origin-opaque](opaque origin), and stores no data on disk. In several cases mentioned below, such keys are created for use by internal network requests.
+A "transient network partition key" is a network partition key for an [opaque origin](https://html.spec.whatwg.org/multipage/origin.html#concept-origin-opaque), and stores no data on disk. In several cases mentioned below, such keys are created for use by internal network requests.
 
 ## Proposed solution
 
@@ -37,14 +38,14 @@ This particular proposal does not cover some other types of network information.
 
 These objects will likely need to respect the network partition key in the future, but will need to be covered by other explainers and spec work:
 
-* HTTP cache [https://github.com/shivanigithub/http-cache-partitioning/blob/master/README.md](already has an explainer of its own).
+* HTTP cache [already has an explainer of its own](https://github.com/shivanigithub/http-cache-partitioning/blob/master/README.md).
 * HTTP auth cache
 * Client certs
 * Clear-Site-Data header
 
 Other solutions will likely need to be used for these:
 
-* [https://blog.chromium.org/2020/01/building-more-private-web-path-towards.html](Cookies)
+* [Cookies](https://blog.chromium.org/2020/01/building-more-private-web-path-towards.html)
 * Reporting API. These need to be updated to match the latest draft of the spec, which makes reporting information document-scoped. Reports can then inherit the network partition key from the document triggering the report.
 * HSTS cache
 * Cert validation (Both the verification cache itself, and OCSP/CRL/ACA network fetches, which will use a single transient network partition key for now, at least)
@@ -64,4 +65,4 @@ We expect partitioning network state to cause a modest reduction in performance,
 Our current experiment is small, and shows a performance change that’s generally within the margin of error.  We’ll release numbers once the experiment is larger, and we have more confidence in the accuracy of our numbers.
 
 ## Acknowledgements
-This explainer takes heavy inspiration from Shivani Sharma’s [https://github.com/shivanigithub/http-cache-partitioning/](HTTP cache partitioning explainer).  It also reflects extensive feedback from Josh Karlin and Paul Jensen.
+This explainer takes heavy inspiration from Shivani Sharma’s [HTTP cache partitioning explainer](https://github.com/shivanigithub/http-cache-partitioning/).  It also reflects extensive feedback from Josh Karlin and Paul Jensen.
