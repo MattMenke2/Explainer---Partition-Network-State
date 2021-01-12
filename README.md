@@ -33,6 +33,7 @@ We propose to key the following connection-associated resources using the networ
 * Alternative service information, including information about which servers have broken alternative services
 * Cache of which servers support HTTP/2 (used to avoid creating extra sockets when establishing a connection to HTTP/2 compatible servers)
 * DNS lookups from PAC scripts will use the network partition key of the request causing the PAC script to issue the lookup
+* Cached information from Expect-CT headers.
 
 This particular proposal does not cover some other types of network information. For clarity, here are some types of network information and resources not covered by this proposal, though this is likely not a complete list.
 
